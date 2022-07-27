@@ -1,22 +1,25 @@
+//
+//  AnalyticsEvent.swift
+//  
+//
+//  Created by clijauco on 7/27/22.
+//
 
 public struct AnalyticsEvent {
     var name: String
     var parameters: [String: Any]
-    var type: AnalyticsEventType
     
     public init(
         name: String,
-        parameters: [String: Any] = [:],
-        type: AnalyticsEventType = .Event
+        parameters: [String: Any] = [:]
     ) {
         self.name = name
         self.parameters = parameters
-        self.type = type
     }
 }
 
-public enum AnalyticsEventType {
-    case Screen
-    case Event
+public struct AnalyticsUserProperty {
+    var name: String
+    var value: String
 }
 

@@ -1,25 +1,33 @@
 
+import FirebaseAnalytics
+
 public protocol AnalyticsManaging {
-    func add(services: [AnalyticsServicing])
-    func sendLogs()
+    func addEvent(event: AnalyticsEvent)
+    func addScreen(event: AnalyticsEvent)
+    func addUserProperty(userProperties: [AnalyticsUserProperty])
+    func addUserProperties(userProperty: AnalyticsUserProperty)
 }
 
 public final class AnalyticsManager : AnalyticsManaging {
-    internal private(set) var services = [AnalyticsServicing]()
-
     public static let shared = AnalyticsManager()
     public init() {}
     
-    /// Call this to add analytics service providers.
-    /// - Parameters:
-    ///   - services: analytics service providers
-    public func add(services: [AnalyticsServicing]) {
-        self.services = services
+    public func addEvent(event: AnalyticsEvent) {
+        Analytics.logEvent(event.name, parameters:event.parameters)
     }
     
-    public func sendLogs() {
-        services.forEach({ service in
-            service.sendAnalyticsEvent()
-        })
+    public func addScreen(event: AnalyticsEvent) {
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: [AnalyticsParameterScreenName: event.name,
+                                                                  AnalyticsParameterScreenClass: "\(event.name)Class"])
+    }
+    
+    public func addUserProperties(userProperty: AnalyticsUserProperty) {
+        Analytics.setUserProperty(userProperty.value, forName: userProperty.name)
+    }
+    
+    public func addUserProperty(userProperties: [AnalyticsUserProperty]) {
+        userProperties.forEach { item in
+            addUserProperties(userProperty: item)
+        }
     }
 }
