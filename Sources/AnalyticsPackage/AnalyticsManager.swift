@@ -1,33 +1,51 @@
 
-import FirebaseAnalytics
 
-public protocol AnalyticsManaging {
-    func addEvent(event: AnalyticsEvent)
-    func addScreen(event: AnalyticsEvent)
-    func addUserProperty(userProperties: [AnalyticsUserProperty])
-    func addUserProperties(userProperty: AnalyticsUserProperty)
-}
-
-public final class AnalyticsManager : AnalyticsManaging {
+public final class AnalyticsManager {
+    
+    internal private(set) var services = [AnalyticsServicing]()
     public static let shared = AnalyticsManager()
     public init() {}
     
-    public func addEvent(event: AnalyticsEvent) {
-        Analytics.logEvent(event.name, parameters:event.parameters)
+    /// Call this to add analytics service providers.
+    /// - Parameters:
+    ///   - services: analytics service providers
+    public func add(services: [AnalyticsServicing]) {
+        self.services = services
     }
     
-    public func addScreen(event: AnalyticsEvent) {
-        Analytics.logEvent(AnalyticsEventScreenView, parameters: [AnalyticsParameterScreenName: event.name,
-                                                                  AnalyticsParameterScreenClass: "\(event.name)Class"])
+    /// Call this to track analytics for an action.
+    /// - Parameters:
+    ///   - event: Event to be tracked
+    public func track(_ event: AnalyticsEvent) {
+        services.forEach({ service in
+            service.addEvent(event: event)
+        })
     }
     
-    public func addUserProperties(userProperty: AnalyticsUserProperty) {
-        Analytics.setUserProperty(userProperty.value, forName: userProperty.name)
+    /// Call this to track analytics for an action.
+    /// - Parameters:
+    ///   - screen: Screen to be tracked
+    public func trackScreen(_ screen: AnalyticsEvent) {
+        services.forEach({ service in
+            service.addEvent(event: screen)
+        })
     }
     
-    public func addUserProperty(userProperties: [AnalyticsUserProperty]) {
-        userProperties.forEach { item in
-            addUserProperties(userProperty: item)
+    /// Call this to track analytics for an action.
+    /// - Parameters:
+    ///   - userProperty: User Property to be tracked
+    public func trackUserProperty(_ userProperty: AnalyticsUserProperty) {
+        services.forEach({ service in
+            service.addUserProperty(userProperty: userProperty)
+        })
+    }
+    
+    /// Call this to track analytics for an action.
+    /// - Parameters:
+    ///   - userProperties: User Properties to be tracked
+    public func trackUserProperties(_ userProperties: [AnalyticsUserProperty]) {
+        userProperties.forEach { userProperty in
+            self.trackUserProperty(userProperty)
         }
     }
 }
