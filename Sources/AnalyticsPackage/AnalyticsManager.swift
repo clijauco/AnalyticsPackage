@@ -17,7 +17,7 @@ public final class AnalyticsManager {
     /// - Parameters:
     ///   - name: name of Event to be tracked
     ///   - params: additional parameters to be tracked
-    public func logEvent(name: String, params:[String:Any]) {
+    public func logEvent(name: String, params:[String:Any] = [:]) {
         providers.forEach({ provider in
             provider.logEvent(name: name, params: params)
         })
