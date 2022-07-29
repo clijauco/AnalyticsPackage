@@ -5,9 +5,10 @@
 //  Created by clijauco on 7/28/22.
 //
 
-public protocol AnalyticsServicing {
-    func addEvent(event: AnalyticsEvent)
-    func addScreen(event: AnalyticsEvent)
-    func addUserProperty(userProperty: AnalyticsUserProperty)
+public protocol AnalyticsProvider {
+    func logEvent(name: String, params:[String:Any])
+    func setScreenName(name: String)
+    func setUserProperty(name:String, value:String)
+    func addUserProperties(userProperties:[String:String])
 }
 
